@@ -1,50 +1,74 @@
 <template>
-  <div>
+  <v-container>
     <h1>Dashboard</h1>
-    <v-data-table
-      :headers="headers"
-      :items="employees"
-      :items-per-page="5"
-      class="elevation-1"
-      @click:row="selectRow"
-    ></v-data-table>
+
+    <v-row>
+      <v-col v-for="sale in sales" :key="`${sale.title}`">
+        <SalesGraph :sale="sale" />
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col v-for="statistic in statistics" :key="`${statistic.title}`">
+        <StatisticCard :statistic="statistic" />
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col cols="8">
+        <EmployeesTable :employees="employees" @select-employee="setEmployee" />
+      </v-col>
+      <v-col cols="4">
+        <EventTimeline :timeline="timeline" />
+      </v-col>
+    </v-row>
 
     <v-snackbar v-model="snackbar">
-      {{ currentItem }}
-      <template v-slot:action="{ attrs }">
-        <v-btn color="pink" text v-bind="attrs" @click="snackbar = false"> Close </v-btn>
-      </template>
+      You have selected {{ selectedEmployee.name }},
+      {{ selectedEmployee.title }}
+      <v-btn color="pink" text @click="snackbar = false"> Close </v-btn>
     </v-snackbar>
-  </div>
+  </v-container>
 </template>
 
 <script>
-import employeesList from '@/data/employees.json'
+import EmployeesTable from '../components/EmployeesTable'
+import EventTimeline from '../components/EventTimeline'
+import SalesGraph from '../components/SalesGraph'
+import StatisticCard from '../components/StatisticCard'
+
+import employeesData from '../data/employees.json'
+import timelineData from '../data/timeline.json'
+import salesData from '../data/sales.json'
+import statisticsData from '../data/statistics.json'
 
 export default {
+  name: 'DashboardPage',
+  components: {
+    EmployeesTable,
+    EventTimeline,
+    SalesGraph,
+    StatisticCard,
+  },
   data() {
     return {
-      currentItem: '',
+      employees: employeesData,
+      sales: salesData,
+      selectedEmployee: {
+        name: '',
+        title: '',
+      },
       snackbar: false,
-      employees: employeesList,
-      headers: [
-        {
-          text: 'Employee ID',
-          value: 'id',
-        },
-        { text: 'Name', value: 'name' },
-        { text: 'Psotion title', value: 'title' },
-        { text: 'Salary ($)', value: 'salary' },
-      ],
+      statistics: statisticsData,
+      timeline: timelineData,
     }
   },
   methods: {
-    selectRow(event) {
+    setEmployee(event) {
       this.snackbar = true
-      this.currentItem = `${event.name}: ${event.title}`
+      this.selectedEmployee.name = event.name
+      this.selectedEmployee.title = event.title
     },
   },
 }
 </script>
-
-<style scoped></style>
