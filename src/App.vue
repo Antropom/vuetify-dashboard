@@ -4,6 +4,7 @@
       <v-toolbar-title>Vuetify Dashboard</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn v-for="{ label, url } in links" :key="`${label}-header-link`" text rounded :to="url"> {{ label }} </v-btn>
+      <v-btn @click="toggleTheme" text rounded>Toggle Theme</v-btn>
     </v-app-bar>
     <v-content>
       <router-view></router-view>
@@ -55,5 +56,12 @@ export default {
       },
     ],
   }),
+
+  methods: {
+    toggleTheme() {
+      this.$vuetify.theme.themes.dark.anchor = '#41B883'
+      this.$vuetify.theme.dark = !this.$vuetify.theme.dark
+    },
+  },
 }
 </script>
